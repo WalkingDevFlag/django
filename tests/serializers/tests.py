@@ -242,6 +242,15 @@ class SerializersTestBase:
         mv_obj = obj_list[0].object
         self.assertEqual(mv_obj.title, movie_title)
 
+    def test_serialize_whitespace_roundtrip(self):
+        """Leading and trailing whitespace survives the roundtrip (#22088)."""
+        name_with_whitespace = "\t kept as-is "
+        data = serializers.serialize(
+            self.serializer_name, [Author(name=name_with_whitespace)]
+        )
+        author = next(serializers.deserialize(self.serializer_name, data)).object
+        self.assertEqual(author.name, name_with_whitespace)
+
     def test_unicode_serialization(self):
         unicode_name = "יוניקוד"
         data = serializers.serialize(self.serializer_name, [Author(name=unicode_name)])
